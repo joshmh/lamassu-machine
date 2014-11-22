@@ -25,7 +25,7 @@ var onSendOnly = false;
 var buttonActive = true;
 
 function connect() {
-  websocket = new WebSocket('ws://localhost:8080/');
+  websocket = new WebSocket('ws://192.168.1.12:8080/');
   websocket.onmessage = function (event) {
     var data = $.parseJSON(event.data);
     processData(data);
