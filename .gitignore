@@ -18,6 +18,7 @@ npm-debug.log
 jig/
 scratch/
 rwc
+/build
 
 i18n/*.zip
 ui/css/fonts
