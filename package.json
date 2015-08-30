@@ -8,6 +8,7 @@
     "boom": "~2.6.1",
     "bunyan": "~0.22.1",
     "clim": "*",
+    "coinkite-javascript": "0.0.1",
     "findit": "~1.1.0",
     "fs-extra": "^0.14.0",
     "fstream": "~0.1.24",
