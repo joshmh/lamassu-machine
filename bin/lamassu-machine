@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-require('babel/register')
-
 // TODO: go through code and take out all evil throws
 require('../logging');
 
