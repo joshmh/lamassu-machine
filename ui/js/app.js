@@ -71,7 +71,7 @@ function processData (data) {
   if (data.fiatExchangeRate) setFiatExchangeRate(data.fiatExchangeRate)
   if (data.buyerAddress) setBuyerAddress(data.buyerAddress)
   if (data.credit) {
-    setCredit(data.credit.fiat, data.credit.bitcoins, data.credit.lastBill)
+    setCredit(data.credit.fiatValue, data.credit.tokenValue, data.credit.lastBill)
   }
   if (data.sessionId) setSessionId(data.sessionId)
   if (data.wifiList) setWifiList(data.wifiList)
@@ -579,14 +579,14 @@ function setCurrency (data) {
   $('.js-currency').text(currency)
 }
 
-function setCredit (fiat, bitcoins, lastBill) {
+function setCredit (fiat, tokenValue, lastBill) {
   // TODO: this should go in brain.js
   if (currentState === 'insert_bills') setState('insert_more_bills')
 
   t('just-inserted',
     locale.translate('You inserted a %s bill').fetch(formatFiat(lastBill)))
   $('.total-deposit').html(formatFiat(fiat))
-  updateBitcoins('.total-btc-rec', bitcoins)
+  updateBitcoins('.total-btc-rec', tokenValue)
 }
 
 function setupCartridges (_cartridges) {
@@ -598,9 +598,9 @@ function setupCartridges (_cartridges) {
   }
 }
 
-function updateBitcoins (selector, bitcoins) {
+function updateBitcoins (selector, tokenValue) {
   var units = 'mBTC'
-  var adjustedValue = bitcoins * 1000
+  var adjustedValue = tokenValue / 1e5
   $(selector).find('.btc-amount').html(formatBitcoins(adjustedValue))
   $(selector).find('.bitcoin-units').html(units)
 }
@@ -621,19 +621,19 @@ function formatFiat (amount, fractionDigits) {
     case 'DKK:en-US':
     case 'SEK:en-US':
       return '<strong>' + amount.toLocaleString(jsLocaleCode, {
-            useGrouping: true,
-            maximumFractionDigits: fractionDigits,
-            minimumFractionDigits: fractionDigits
-          }) + '</strong> ' + currency
+        useGrouping: true,
+        maximumFractionDigits: fractionDigits,
+        minimumFractionDigits: fractionDigits
+      }) + '</strong> ' + currency
     default:
       return '<strong>' + amount.toLocaleString(jsLocaleCode, {
-            style: 'currency',
-            currency: currency,
-            currencyDisplay: 'symbol',
-            useGrouping: true,
-            maximumFractionDigits: fractionDigits,
-            minimumFractionDigits: fractionDigits
-          }) + '</strong>'
+        style: 'currency',
+        currency: currency,
+        currencyDisplay: 'symbol',
+        useGrouping: true,
+        maximumFractionDigits: fractionDigits,
+        minimumFractionDigits: fractionDigits
+      }) + '</strong>'
   }
 }
 
@@ -646,7 +646,7 @@ function setExchangeRate (rate) {
   var rateStr = formatFiat(rate.xbtToFiat, 2)
   var translated = locale.translate('Our current Bitcoin price is %s').fetch(rateStr)
   $('.js-i18n-current-bitcoin-price').html(translated)
-  updateBitcoins('.reverse-exchange-rate', rate.fiatToXbt)
+  updateBitcoins('.reverse-exchange-rate', rate.fiatToXbt * 1e8)
   var insertedText = locale.translate('per %s inserted')
     .fetch(singleCurrencyUnit())
   $('#fiat-inserted').html(insertedText)
@@ -708,8 +708,8 @@ function sendOnly (reason) {
 }
 
 function setPartialSend (sent, total) {
-  $('#already-sent').text(formatFiat(sent.fiat))
-  $('#pending-sent').text(formatFiat(total.fiat - sent.fiat))
+  $('#already-sent').text(formatFiat(sent.fiatValue))
+  $('#pending-sent').text(formatFiat(total.fiatValue - sent.fiatValue))
 }
 
 function t (id, str) {
@@ -749,11 +749,11 @@ function loadI18n (localeCode) {
   var messages = locales[localeCode] || locales['en-US']
 
   return new Jed({
-      'missing_key_callback': function () {},
-      'locale_data': {
-        'messages': messages
-      }
-    })
+    'missing_key_callback': function () {},
+    'locale_data': {
+      'messages': messages
+    }
+  })
 }
 
 function initDebug () {}
@@ -787,8 +787,8 @@ function manageFiatButtons (activeDenominations) {
 function fiatCredit (data) {
   var credit = data.credit
   var activeDenominations = data.activeDenominations
-  var fiat = credit.fiat
-  var mbtc = credit.satoshis / 1e5
+  var fiat = credit.fiatValue
+  var mbtc = credit.tokenValue / 1e5
   if (mbtc === 0) $('#js-i18n-choose-digital-amount').hide()
   else $('#js-i18n-choose-digital-amount').show()
 
@@ -814,10 +814,10 @@ function satoshisToMilliBitcoins (satoshis) {
 }
 
 function setDepositAddress (tx) {
-  var bitcoins = satoshisToBitcoins(tx.satoshis)
+  var bitcoins = satoshisToBitcoins(tx.tokenValue)
 
   $('.deposit_state .loading').hide()
-  $('.deposit_state .send-notice .bitcoin-address').text(tx.toAddress)
+  $('.deposit_state .send-notice .bitcoin-address').text(tx.address)
   $('.deposit_state .send-notice').show()
 
   $('#qr-code-deposit').empty()
@@ -825,14 +825,14 @@ function setDepositAddress (tx) {
     render: 'canvas',
     width: 275,
     height: 275,
-    text: 'bitcoin:' + tx.toAddress + '?amount=' + bitcoins
+    text: 'bitcoin:' + tx.address + '?amount=' + bitcoins
   })
 }
 
 function deposit (tx) {
-  var millies = satoshisToMilliBitcoins(tx.satoshis)
+  var millies = satoshisToMilliBitcoins(tx.tokenValue)
   $('.deposit_state .digital .js-amount').text(millies)
-  $('.deposit_state .fiat .js-amount').text(tx.fiat)
+  $('.deposit_state .fiat .js-amount').text(tx.fiatValue)
   $('.deposit_state .send-notice').hide()
   $('#qr-code-deposit').empty()
   $('.deposit_state .loading').show()
@@ -841,10 +841,10 @@ function deposit (tx) {
 }
 
 function fiatReceipt (tx) {
-  var millies = satoshisToMilliBitcoins(tx.satoshis)
+  var millies = satoshisToMilliBitcoins(tx.tokenValue)
   $('.fiat_receipt_state .digital .js-amount').text(millies)
-  $('.fiat_receipt_state .fiat .js-amount').text(tx.fiat)
-  $('.fiat_receipt_state .sent-coins .bitcoin-address').text(tx.toAddress)
+  $('.fiat_receipt_state .fiat .js-amount').text(tx.fiatValue)
+  $('.fiat_receipt_state .sent-coins .bitcoin-address').text(tx.address)
 
   $('#qr-code-fiat-receipt').empty()
   $('#qr-code-fiat-receipt').qrcode({
@@ -858,10 +858,10 @@ function fiatReceipt (tx) {
 }
 
 function fiatComplete (tx) {
-  var millies = satoshisToMilliBitcoins(tx.satoshis)
+  var millies = satoshisToMilliBitcoins(tx.tokenValue)
   $('.fiat_complete_state .digital .js-amount').text(millies)
-  $('.fiat_complete_state .fiat .js-amount').text(tx.fiat)
-  $('.fiat_complete_state .sent-coins .bitcoin-address').text(tx.toAddress)
+  $('.fiat_complete_state .fiat .js-amount').text(tx.fiatValue)
+  $('.fiat_complete_state .sent-coins .bitcoin-address').text(tx.address)
 
   $('#qr-code-fiat-complete').empty()
   $('#qr-code-fiat-complete').qrcode({
@@ -873,5 +873,3 @@ function fiatComplete (tx) {
 
   setState('fiat_complete')
 }
-
-function initDebug () {}
