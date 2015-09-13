@@ -3,6 +3,7 @@
   "version": "0.5.8",
   "dependencies": {
     "async": "~0.2.9",
+    "base-x": "^1.0.1",
     "bitcoin-address": "~0.1.0",
     "bluebird": "~2.4.2",
     "boom": "~2.6.1",
