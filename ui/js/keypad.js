@@ -1,9 +1,11 @@
-/* globals $, formatE164, formatInternational */
+/* globals $, formatE164, formatInternational, Damm */
 var TIMEOUT = 60000
 var LENGTHS = {
   phoneNumber: 15,
   code: 10
 }
+
+var damm = Damm()
 
 var Keypad = function (keypadId, opts, callback) {
   this.keypadId = keypadId
@@ -20,15 +22,12 @@ var Keypad = function (keypadId, opts, callback) {
     self._restartTimeout()
     var target = $(e.target)
     if (target.hasClass('clear')) {
+      self.callback(null)
       return self.reset()
     }
 
     if (target.hasClass('enter')) {
-      self.deactivate()
-      var result = self.type === 'phoneNumber' ?
-        formatE164(self.opts.country, self.result) :
-        self.result
-      return self.callback(result)
+      return self._enter()
     }
 
     if (target.hasClass('key')) {
@@ -37,6 +36,18 @@ var Keypad = function (keypadId, opts, callback) {
   }
 
   this.keypad.get(0).addEventListener('mousedown', keyHandler)
+}
+
+Keypad.prototype._enter = function _enter () {
+  this.deactivate()
+  var result = this.type === 'phoneNumber' ?
+    formatE164(this.opts.country, this.result) :
+    this.result
+  return this.callback(result)
+}
+
+Keypad.prototype._invalid = function _invalid () {
+  return this.callback(false)
 }
 
 Keypad.prototype._restartTimeout = function _restartTimeout () {
@@ -76,8 +87,17 @@ Keypad.prototype._keyPress = function _keyPress (target) {
   if (this.result.length > 0 && this.type === 'phoneNumber') {
     this.keypad.find('.enter-plus').addClass('enter').removeClass('plus').text('Enter')
   }
+
   var numeral = target.text()
   this.result += numeral
+
+  if (this.result.length >= 7 && this.type === 'pairingCode') {
+    if (this.result.length > 7) return
+    this.keypad.find('.box').text(this.result)
+    if (damm.verify(this.result)) return this._enter()
+    return this._invalid()
+  }
+
   var display = this.type === 'phoneNumber' ?
     formatInternational(this.opts.country, this.result) :
     this.result

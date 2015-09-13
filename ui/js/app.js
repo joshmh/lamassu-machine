@@ -16,6 +16,7 @@ var websocket = null
 var wifiKeyboard = null
 var phoneKeypad = null
 var securityKeypad = null
+var pairingKeypad = null
 var previousState = null
 var onSendOnly = false
 var buttonActive = true
@@ -101,15 +102,6 @@ function processData (data) {
         locale.translate('Connected. Waiting for ticker.').fetch())
       setState('wifi_connecting')  // in case we didn't go through wifi-connecting
       break
-    case 'pairing':
-      confirmBeep.play()
-      setState('pairing')
-      break
-    case 'pairingError':
-      $('.js-pairing-error').text(data.err)
-      // Give it some time to update text in background
-      setTimeout(function () { setState('pairing_error') }, 500)
-      break
     case 'booting':
       if (currentState !== 'maintenance') setState('booting')
       break
@@ -184,6 +176,13 @@ function processData (data) {
     case 'unadmin':
       toggleAdmin(false)
       break
+    case 'pairing':
+      pairing(data.pairing)
+      break
+    case 'pairingCode':
+      pairingKeypad.activate()
+      setState('pairing_code')
+      break
     default:
       if (data.action) setState(window.snakecase(data.action))
   }
@@ -204,14 +203,24 @@ $(document).ready(function () {
 
   phoneKeypad = new Keypad('phone-keypad', {type: 'phoneNumber', country: 'US'}, function (result) {
     if (currentState !== 'register_phone') return
+    if (!result) return
     console.log('phoneKeypad: %s', result)
     buttonPressed('phoneNumber', result)
   })
 
   securityKeypad = new Keypad('security-keypad', {type: 'code'}, function (result) {
     if (currentState !== 'security_code') return
+    if (!result) return
     console.log(result)
     buttonPressed('securityCode', result)
+  })
+
+  pairingKeypad = new Keypad('pairing-keypad', {type: 'pairingCode'}, function (result) {
+    if (currentState !== 'pairing_code') return
+    if (result === false) return $('.error').show()
+    if (result === null) return $('.error').hide()
+    console.log(result)
+    buttonPressed('pairingCode', result)
   })
 
   // buffers automatically when created
@@ -906,4 +915,9 @@ function fiatComplete (tx) {
 function toggleAdmin (toggle) {
   if (toggle) $('body').addClass('admin')
   if (!toggle) $('body').removeClass('admin')
+}
+
+function pairing (otp) {
+  $('#otp').text(otp)
+  setState('pairing')
 }
