@@ -17,9 +17,11 @@
     <script src="js/vendor/snake_case.js"></script>
     <script src="js/vendor/langmap.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/debug.js"></script>
   </head>
   <body>
     <section id="view">
+      <div class="admin-dot"></div>
       <section class="viewport locked_password_state"
           data-tr-section="locked-password" id="locked-password">
         <section id="locked-keyboard" class="wifi-network pass-screen">
@@ -411,7 +413,7 @@
 
       <section class="viewport change_language_state brandon" data-tr-section="change-language">
         <section class="main">
-          <ul id="languages" class="languages">
+          <ul id="languages" class="choices">
           </ul>
         </section>
       </section>
@@ -1123,18 +1125,6 @@
         </section>
       </section>
 
-      <section class="viewport pairing_state info" data-tr-section="pairing">
-        <section class="main">
-          <section class="top">
-            <section class="content">
-              <h1 class="js-i18n">Pairing...</h1>
-            </section>
-          </section>
-          <section class="bottom">
-          </section>
-        </section>
-      </section>
-
       <section class="viewport pairing_error_state info" data-tr-section="pairing-error">
         <section class="main">
           <section class="top">
@@ -1329,6 +1319,20 @@
           <section class="actions">
             <span class="button cancel" id="out-of-cash-ok">OK</span>
           </section>
+        </section>
+      </section>
+
+      <section class="viewport admin_state brandon" data-tr-section="admin">
+        <section class="main">
+          <ul id="adminChoices" class="choices">
+            <li id="pairing" class="square-button">Pairing</li>
+          </ul>
+        </section>
+      </section>
+
+      <section class="viewport pairing_state brandon" data-tr-section="pairing">
+        <section class="main">
+          <h2>Pairing</h2>
         </section>
       </section>
 

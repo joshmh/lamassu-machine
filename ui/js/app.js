@@ -178,6 +178,12 @@ function processData (data) {
     case 'restart':
       setState('restart')
       break
+    case 'admin':
+      toggleAdmin(true)
+      break
+    case 'unadmin':
+      toggleAdmin(false)
+      break
     default:
       if (data.action) setState(window.snakecase(data.action))
   }
@@ -193,6 +199,8 @@ $(document).ready(function () {
             function () { return false }
 
   wifiKeyboard = new Keyboard('wifi-keyboard').init()
+
+  initTapDance()
 
   phoneKeypad = new Keypad('phone-keypad', {type: 'phoneNumber', country: 'US'}, function (result) {
     if (currentState !== 'register_phone') return
@@ -284,6 +292,8 @@ $(document).ready(function () {
   setupButton('want_cash', 'startFiat')
   setupButton('cash-out-button', 'cashOut')
   setupButton('send-coins', 'sendBitcoins')
+  setupButton('pairing', 'pairing')
+
   setupImmediateButton('scan-id-cancel', 'cancelIdScan')
   setupImmediateButton('phone-number-cancel', 'cancelPhoneNumber',
     phoneKeypad.deactivate.bind(phoneKeypad))
@@ -350,6 +360,25 @@ function targetButton (element) {
     classList.contains('square-button')
   if (special) { return element }
   return targetButton(element.parentNode)
+}
+
+function initTapDance () {
+  var arr = []
+
+  var pattern = ['tl', 'br', 'tl', 'tr']
+  var patternStr = pattern.join(',')
+  var view = document.getElementById('view')
+  document.addEventListener('mousedown', function (e) {
+    var point = {x: e.clientX / view.clientWidth, y: e.clientY / view.clientHeight}
+    if (point.x <= 0.5 && point.y <= 0.5) arr.push('tl')
+    if (point.x <= 0.5 && point.y > 0.5) arr.push('bl')
+    if (point.x > 0.5 && point.y <= 0.5) arr.push('tr')
+    if (point.x > 0.5 && point.y > 0.5) arr.push('br')
+
+    if (arr.length === 1) setTimeout(function () { arr = [] }, 8000)
+
+    if (arr.join(',') === patternStr) buttonPressed('tapDance')
+  })
 }
 
 function touchEvent (element, callback) {
@@ -872,4 +901,9 @@ function fiatComplete (tx) {
   })
 
   setState('fiat_complete')
+}
+
+function toggleAdmin (toggle) {
+  if (toggle) $('body').addClass('admin')
+  if (!toggle) $('body').removeClass('admin')
 }
