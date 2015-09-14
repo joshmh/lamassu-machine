@@ -1643,9 +1643,8 @@ body.admin .admin-dot {
   z-index: 100;
 }
 
-p.otp {
-  font-size: 200%;
-  border: 1px dotted;
+.otp {
+  font-weight: bold !important;
   padding: 0.5em 0;
   margin-top: 1em !important;
 }
@@ -1653,5 +1652,9 @@ p.otp {
 .error {
   color: red;
   font-weight: bold;
+  display: none;
+}
+
+.js-initialize-backup {
   display: none;
 }

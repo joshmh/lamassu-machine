@@ -1318,6 +1318,52 @@
         </section>
       </section>
 
+      <section class="viewport initialize_proceed_state fiat-side" data-tr-section="initialize-proceed">
+        <section class="info">
+          <h1 class="js-i18n">Clear the decks!</h1>
+          <section class="description long">
+            <p class="js-i18n">
+              Your Lamassu Bitcoin Machine is about to generate its master key and
+              display it for backup.
+            <p class="js-i18n">
+              It's <strong>critical</strong> to clear all unnecessary onlookers
+              out of the room, disable any cameras, and block any windows. Make
+              sure you have a solid backup plan before continuing.
+            <p>
+          </section>
+          <section class="actions">
+            <span class="button js-i18n" id="initialize-proceed-ok">Ready!</span>
+            <span class="button js-i18n cancel" id="initialize-proceed-cancel">Later</span>
+          </section>
+        </section>
+      </section>
+
+      <section class="viewport initialize_state brandon fiat-side" data-tr-section="initialize">
+        <section class="main">
+          <section class="info">
+            <h1>Cryptographic initialization</h1>
+            <section class="description">
+              <div class="js-initializing">
+                <p>Now generating master keys...</p>
+                <div class="spinner">
+                  <div class="bounce1"></div>
+                  <div class="bounce2"></div>
+                  <div class="bounce3"></div>
+                </div>
+              </div>
+              <div class="js-initialize-backup">
+                <p>Write this down on paper and store securely:</p>
+                <p id="master-key" class="otp"></p>
+                <p>This is the backup for <strong>all</strong> Bitcoin Machine records.</p>
+              </div>
+            </section>
+            <section class="actions js-initialize-backup">
+              <span class="button js-i18n" id="initialize-ok">Got it!</span>
+            </section>
+          </section>
+        </section>
+      </section>
+
       <section class="viewport admin_state brandon" data-tr-section="admin">
         <section class="main">
           <ul id="adminChoices" class="choices">

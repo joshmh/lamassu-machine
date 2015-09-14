@@ -19,8 +19,12 @@ function doInitDebug () {
   setCredit(25, 0.202, 20)
   // setState('insert_more_bills')
   // setState('scan_address')
-  pairing('jealous accuse alarm hunt shoot gravity stay pumpkin matter worth pelican price')
-  // setState('virgin')
+  //pairing('jealous accuse alarm hunt shoot gravity stay pumpkin matter worth pelican price')
+  $('#master-key').text('jealous accuse alarm hunt shoot gravity stay pumpkin matter worth pelican price')
+  // $('.js-initialize-backup').hide()
+  $('.js-initializing').hide()
+  $('.js-initialize-backup').show()
+  setState('initialize')
   var counter = 0
 
   $(document).keypress(function() {
