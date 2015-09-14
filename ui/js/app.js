@@ -292,8 +292,6 @@ $(document).ready(function () {
   setupImmediateButton('chooseFiatCancel', 'chooseFiatCancel')
   setupImmediateButton('depositCancel', 'depositCancel')
 
-  setupButton('initialize', 'initialize')
-  setupButton('test-mode', 'testMode')
   setupButton('pairing-scan', 'pairingScan')
   setupButton('pairing-scan-cancel', 'pairingScanCancel')
   setupButton('pairing-error-ok', 'pairingScanCancel')
@@ -598,9 +596,9 @@ function setPrimaryLocales (primaryLocales) {
     var lang = lookupLocaleNames(l)
     var englishName = lang.englishName
     var nativeName = lang.nativeName
-    var li = nativeName === englishName ?
-      '<li class="square-button" data-locale="' + l + '">' + englishName + '</li>' :
-      '<li class="square-button" data-locale="' + l + '">' + englishName +
+    var li = nativeName === englishName
+    ? '<li class="square-button" data-locale="' + l + '">' + englishName + '</li>'
+    : '<li class="square-button" data-locale="' + l + '">' + englishName +
       '<span class="native">' + nativeName + '</span> </li>'
     languages.append(li)
   }
@@ -735,9 +733,9 @@ function sendOnly (reason) {
 
   t('or', '!')
   $('.or-circle circle').attr('r', $('#js-i18n-or').width() / 2 + 15)
-  var reasonText = reason === 'transactionLimit' ?
-    'Transaction limit reached.' :
-    "We're out of bitcoins."
+  var reasonText = reason === 'transactionLimit'
+  ? 'Transaction limit reached.'
+  : "We're out of bitcoins."
   t('limit-reached', locale.translate(reasonText).fetch())
   t('limit-description',
     locale.translate('Please touch <strong>Send Bitcoins</strong> to complete your purchase.').fetch())

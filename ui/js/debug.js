@@ -19,8 +19,8 @@ function doInitDebug () {
   setCredit(25, 0.202, 20)
   // setState('insert_more_bills')
   // setState('scan_address')
-  // pairing('hjsh ajsh qiuw zhxj')
-  setState('pairing_code')
+  pairing('jealous accuse alarm hunt shoot gravity stay pumpkin matter worth pelican price')
+  // setState('virgin')
   var counter = 0
 
   $(document).keypress(function() {
