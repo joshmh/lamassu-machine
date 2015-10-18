@@ -170,10 +170,10 @@ function processData (data) {
     case 'restart':
       setState('restart')
       break
-    case 'admin':
+    case 'adminMode':
       toggleAdmin(true)
       break
-    case 'unadmin':
+    case 'unAdminMode':
       toggleAdmin(false)
       break
     case 'pairing':
@@ -445,6 +445,8 @@ function setScreen (newScreen, oldScreen) {
 
 function setState (state, delay) {
   if (state === currentState) return
+
+  toggleAdmin(false)
 
   onSendOnly = false
 

@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+'use strict'
+
 // TODO: go through code and take out all evil throws
 require('../logging');
 
