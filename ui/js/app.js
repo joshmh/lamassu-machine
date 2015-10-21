@@ -332,6 +332,9 @@ $(document).ready(function () {
   setupButton('change-language-button', 'changeLanguage')
   setupButton('digital-change-language-button', 'changeLanguage')
 
+  setupButton('initialize-proceed-ok', 'initializeCrypto')
+  setupButton('initialize-proceed-cancel', 'idle')
+
   var lastTouch = null
 
   var languageButtons = document.getElementById('languages')
