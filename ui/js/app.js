@@ -83,6 +83,8 @@ function processData (data) {
   if (data.cartridges) setupCartridges(data.cartridges)
   if (data.beep) confirmBeep.play()
   if (data.sent && data.total) setPartialSend(data.sent, data.total)
+  if (data.masterKey) displayMasterKey(data.masterKey)
+  if (data.pairingMnemonic) displayPairingMnemonic(data.pairingMnemonic)
   swaperoo('.js-redeem', '.js-deposit', data.redeem)
 
   switch (data.action) {
@@ -334,6 +336,8 @@ $(document).ready(function () {
 
   setupButton('initialize-proceed-ok', 'initializeCrypto')
   setupButton('initialize-proceed-cancel', 'idle')
+
+  setupButton('initialize-ok', 'idle')
 
   var lastTouch = null
 
@@ -913,6 +917,16 @@ function fiatComplete (tx) {
   })
 
   setState('fiat_complete')
+}
+
+function displayMasterKey (masterKey) {
+  $('#master-key').text(masterKey)
+  $('.js-initializing').hide()
+  $('.js-initialize-backup').show()
+}
+
+function displayPairingMnemonic (pairingMnemonic) {
+  $('#otp').text(pairingMnemonic)
 }
 
 function toggleAdmin (toggle) {
